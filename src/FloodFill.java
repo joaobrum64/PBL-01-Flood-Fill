@@ -1,39 +1,52 @@
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
 
 public class FloodFill {
-    private static final int BRANCO = 0xFFFFFFFF;
     private static final int NOVA_COR = 0xFFA032C7;
+    private static int frameCont = 0;
 
-    public static void floodFill(BufferedImage img, int startX, int startY, boolean usePilha) {
+    public static void floodFill(BufferedImage img, int startX, int startY, boolean usePilha, AnimationFrame frame) {
         int largura = img.getWidth();
         int altura = img.getHeight();
-        int corFundo = img.getRGB(startX, startY);
+        int corInicial = img.getRGB(startX, startY);
 
-        if (corFundo != BRANCO) return;
+        if (corInicial == NOVA_COR) return;
 
         Pilha pilha = new Pilha();
         Fila fila = new Fila();
 
-        if (usePilha) {
+        if (usePilha){
             pilha.push(startX, startY);
-        } else {
+        }
+        else {
             fila.enqueue(startX, startY);
+        }
+
+        File frames = new File("frames");
+        if (!frames.exists()) {
+            frames.mkdir();
         }
 
         while ((usePilha && !pilha.vazia()) || (!usePilha && !fila.vazia())) {
             Node node = usePilha ? pilha.pop() : fila.dequeue();
-            int x = node.x;
-            int y = node.y;
+            int x = node.x, y = node.y;
 
-            if (x < 0 || x >= largura || y < 0 || y >= altura || img.getRGB(x, y) != BRANCO) {
+            if (x < 0 || x >= largura || y < 0 || y >= altura || img.getRGB(x, y) != corInicial) {
                 continue;
             }
 
             img.setRGB(x, y, NOVA_COR);
-            salvarFrame(img, "frame_" + x + "_" + y + ".png");
+            SwingUtilities.invokeLater(() -> frame.updateImage(img));
+            salvarFrame(img, usePilha ? "pilha" : "fila");
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             if (usePilha) {
                 pilha.push(x + 1, y);
@@ -49,9 +62,10 @@ public class FloodFill {
         }
     }
 
-    private static void salvarFrame(BufferedImage img, String nomeArquivo) {
+    private static void salvarFrame(BufferedImage img, String tipo) {
         try {
-            ImageIO.write(img, "png", new File("frames/" + nomeArquivo));
+            String nomeArquivo = String.format("frames/%s_frame_%04d.png", tipo, frameCont++);
+            ImageIO.write(img, "png", new File(nomeArquivo));
         } catch (IOException e) {
             e.printStackTrace();
         }
