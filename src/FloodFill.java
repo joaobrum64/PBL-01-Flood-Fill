@@ -16,8 +16,6 @@ public class FloodFill {
         int altura = img.getHeight();
         int corInicial = img.getRGB(startX, startY);
 
-        //Evita loop infinito caso corInicial = NOVA_COR
-
         if (corInicial == NOVA_COR) return;
 
         //Cria pilha e fila para floodFill
@@ -25,7 +23,7 @@ public class FloodFill {
         Pilha pilha = new Pilha();
         Fila fila = new Fila();
 
-        //Adiciona o ponto inicial para pilha e fila
+        //Dá início à pilha/fila
 
         if (usePilha){
             pilha.push(startX, startY);
