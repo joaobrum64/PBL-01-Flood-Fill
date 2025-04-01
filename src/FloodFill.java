@@ -36,9 +36,16 @@ public class FloodFill {
 
         //Diretório para frames da animação
 
-        File frames = new File("frames");
-        if (!frames.exists()) {
-            frames.mkdir();
+        File pastaFrames = new File("frames");
+        if (!pastaFrames.exists()) {
+            pastaFrames.mkdir();
+        } else {
+            File[] arquivos = pastaFrames.listFiles();
+            if (arquivos != null) {
+                for (File arquivo : arquivos) {
+                    arquivo.delete();
+                }
+            }
         }
 
         //Loop que persiste enquanto houver elementos na estrutura escolhida
