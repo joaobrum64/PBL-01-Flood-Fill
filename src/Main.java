@@ -11,6 +11,8 @@ public class Main {
         AnimationFrame frameFila = new AnimationFrame("Fila", 100, 100);
         AnimationFrame framePilha = new AnimationFrame("Pilha", 100, 300);
 
+        // Cria uma thread que executa o algoritmo de preenchimento usando pilha (usePilha = True)
+
         new Thread(() -> {
             FloodFill.floodFill(imagemPilha, 0, 0, true, framePilha);
             try {
@@ -19,6 +21,8 @@ public class Main {
                 e.printStackTrace();
             }
         }).start();
+
+        // Cria uma thread que executa o algoritmo de preenchimento usando fila (usePilha = False)
 
         new Thread(() -> {
             FloodFill.floodFill(imagemFila, 0, 0, false, frameFila);
